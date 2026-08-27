@@ -28,8 +28,13 @@ python3 main.py
 ```
 
 O jogo reproduz sons durante a introducao e usa os arquivos em
-`assets/sounds/`. Na interface, use `S` e `N` para responder, `Enter` para
-confirmar telas e palpites, e `Backspace` para corrigir o numero digitado.
+`assets/sounds/`. A interface possui um menu inspirado no prototipo: use as
+setas para alternar entre `START` e `INSTRUCTIONS`, e `Enter` para selecionar.
+Na partida, digite o palpite e confirme com `Enter`; use `Backspace` para
+corrigir e `Esc` para voltar ao menu.
+
+A area interna do monitor usa uma tela virtual de `1000x700` e e escalada para
+acompanhar o tamanho da janela.
 
 ## Regras
 
@@ -43,6 +48,7 @@ confirmar telas e palpites, e `Backspace` para corrigir o numero digitado.
 ```text
 .
 ├── assets/sounds/       # Efeitos sonoros
+├── assets/images/prints/ # Prototipos das telas
 ├── game/
 │   ├── cyberpc.py       # Dialogos e comportamento do CyberPC
 │   ├── game.py          # Fluxo da partida em modo texto
@@ -56,5 +62,5 @@ confirmar telas e palpites, e `Backspace` para corrigir o numero digitado.
 └── requirements.txt     # Dependencias
 ```
 
-`game/old_versions/cyberBattle.py` e a primeira versao do jogo e foi mantido como
-referencia. A versao organizada deve ser executada por `main.py`.
+`game/old_versions/cyberBattle.py` é a primeira versão do jogo e foi mantido como
+referencia. `game/old_versions/terminal_game.py`é a segunda versão do jogo, ainda no terminal. A versão atual e organizada deve ser executada por `main.py`.
