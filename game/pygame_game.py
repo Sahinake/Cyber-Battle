@@ -38,6 +38,8 @@ class PygameBattle:
         self.type_index = 0
         self.type_started = pygame.time.get_ticks()
         self.type_speed = 18
+        self.glitch_until = 0
+        self.next_glitch = pygame.time.get_ticks() + random.randint(1800, 4200)
         self.audio = None
         try:
             self.audio = AudioManager()
@@ -106,6 +108,7 @@ class PygameBattle:
     def processar_menu(self, event):
         if event.key in (pygame.K_UP, pygame.K_DOWN):
             self.menu_index = 1 - self.menu_index
+            self.tocar("touch.mp3")
         elif event.key == pygame.K_RETURN:
             if self.menu_index == 0:
                 self.iniciar_jogo()
@@ -294,6 +297,7 @@ class PygameBattle:
         return y
 
     def desenhar(self):
+        self.atualizar_glitch()
         self.virtual.fill((7, 10, 16))
         if self.state == "menu":
             self.desenhar_menu()
@@ -413,5 +417,34 @@ class PygameBattle:
         pygame.draw.rect(self.screen, (0, 104, 83), moldura, width=max(2, int(3 * escala)))
         margem = int(32 * escala)
         destino = pygame.Rect(moldura.x + margem, moldura.y + margem, monitor_w - margem * 2, monitor_h - margem * 2)
-        imagem = pygame.transform.smoothscale(self.virtual, destino.size)
+        imagem_virtual = self.criar_glitch() if self.glitch_ativo() else self.virtual
+        imagem = pygame.transform.smoothscale(imagem_virtual, destino.size)
         self.screen.blit(imagem, destino)
+
+    def atualizar_glitch(self):
+        agora = pygame.time.get_ticks()
+        if agora >= self.next_glitch:
+            self.glitch_until = agora + random.randint(70, 180)
+            self.next_glitch = agora + random.randint(2200, 6500)
+
+    def glitch_ativo(self):
+        return pygame.time.get_ticks() < self.glitch_until
+
+    def criar_glitch(self):
+        glitch = self.virtual.copy()
+        largura, altura = glitch.get_size()
+        quantidade = random.randint(2, 6)
+        for _ in range(quantidade):
+            y = random.randrange(0, altura - 8, 4)
+            altura_faixa = random.randint(2, 18)
+            deslocamento = random.randint(-32, 32)
+            faixa = self.virtual.subsurface(
+                pygame.Rect(0, y, largura, min(altura_faixa, altura - y))
+            ).copy()
+            glitch.blit(faixa, (deslocamento, y))
+
+        for _ in range(random.randint(1, 3)):
+            y = random.randint(0, altura - 3)
+            cor = random.choice([(0, 196, 151), (25, 199, 229), (231, 42, 123)])
+            pygame.draw.rect(glitch, (*cor, random.randint(70, 150)), (0, y, largura, random.randint(1, 3)))
+        return glitch
