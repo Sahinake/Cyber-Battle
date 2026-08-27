@@ -1,8 +1,8 @@
-from game.game import MentalBattle
+from game.pygame_game import PygameBattle
 
 def main():
-    jogo = MentalBattle()
-    jogo.iniciar()
+    jogo = PygameBattle()
+    jogo.executar()
 
 
 if __name__ == "__main__":

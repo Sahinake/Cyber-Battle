@@ -1,7 +1,8 @@
 # Cyber-Battle
 
-Jogo de adivinhacao em Python no qual o jogador enfrenta o CyberPC. O
-computador escolhe um numero entre 1 e 20, e o jogador tenta descobri-lo.
+Jogo de adivinhacao em Python no qual o jogador enfrenta o CyberPC em uma
+interface grafica feita com pygame. O computador escolhe um numero entre 1 e
+20, e o jogador tenta descobri-lo.
 
 ## Requisitos
 
@@ -27,7 +28,8 @@ python3 main.py
 ```
 
 O jogo reproduz sons durante a introducao e usa os arquivos em
-`assets/sounds/`.
+`assets/sounds/`. Na interface, use `S` e `N` para responder, `Enter` para
+confirmar telas e palpites, e `Backspace` para corrigir o numero digitado.
 
 ## Regras
 
@@ -43,7 +45,8 @@ O jogo reproduz sons durante a introducao e usa os arquivos em
 ├── assets/sounds/       # Efeitos sonoros
 ├── game/
 │   ├── cyberpc.py       # Dialogos e comportamento do CyberPC
-│   ├── game.py          # Fluxo principal da partida
+│   ├── game.py          # Fluxo da partida em modo texto
+│   ├── pygame_game.py   # Interface grafica e eventos
 │   └── player.py        # Entrada e validacao dos palpites
 ├── utils/
 │   ├── audio.py         # Gerenciamento de audio
