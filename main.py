@@ -1,8 +1,8 @@
 from game.pygame_game import PygameBattle
 
 def main():
-    jogo = PygameBattle()
-    jogo.executar()
+    game = PygameBattle()
+    game.execute()
 
 
 if __name__ == "__main__":
