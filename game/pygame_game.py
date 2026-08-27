@@ -261,7 +261,7 @@ class PygameBattle:
         if self.attempts == 1:
             return "Sensei? Como você me achou?"
         if self.attempts <= 6:
-            return f"Você venceu. Tentativas: {self.attempts}."
+            return f"Tenho que admitir... você até que é bom terráqueo. Tentativas: {self.attempts}."
         if self.attempts <= 10:
             return f"Vamos considerar isso como um empate... Tentativas: {self.attempts}."
         return f"Sabia que você não era sábio o suficiente para me deter! Você falhou com {self.attempts} tentativas."
