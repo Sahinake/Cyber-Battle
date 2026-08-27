@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Ambientes virtuais
+.venv/
+venv/
+env/
+ENV/
+
+# Ferramentas e cobertura
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Configuracoes locais do editor
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# Arquivos do sistema operacional
+.DS_Store
+Thumbs.db

@@ -1,14 +1,18 @@
-#ESCREVA SEU CÓDIGO!   <---- ISTO É UM COMENTÁRIO
 import random
 import time
 from pygame import mixer
+
 num = random.randint(1,20)
+
 print('{:=^25}'.format(' Mental Battle '))
 time.sleep(1)
+
 inst = str(input('''Antes do jogo começar, gostaria de ver as
                 instruções? [S/N] '''))
+
 while((inst.lower() !='s') and (inst.lower() !='n')):
     inst = str(input('Responda apenas com [S/N] '))
+
 if(inst.lower() =='s'):
     print('{:=^35}'.format(' Instruções Sobre o Jogo '))
     print('''Você está duelando com CyberPC! Um computador convencido e 
@@ -19,6 +23,7 @@ if(inst.lower() =='s'):
             De 6 á 10 tentativas = Empate.
             De 10 tentativas para cima: Derrota! ''')
     next = input("Aperte qualquer tecla para prosseguir... ")
+    
 print('Convocando CyberPC para a Partida...')
 time.sleep(3)
 print('CyberPC entrou!')
@@ -92,6 +97,6 @@ else:
         print('''CyberPC: Sabia que você não era sábio o suficiente para
                    me deter!''')
         print('Você falhou com {} tentativas!'.format(contagem))
-mixer.music.stop
+mixer.music.stop()
 print('CyberPC deixou a sala!')
 
