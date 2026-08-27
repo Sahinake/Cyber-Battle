@@ -1,8 +1,10 @@
 # Cyber-Battle
-
 Jogo de adivinhacao em Python no qual o jogador enfrenta o CyberPC em uma
 interface grafica feita com pygame. O computador escolhe um numero entre 1 e
 20, e o jogador tenta descobri-lo.
+
+<img width="1175" height="906" alt="Tela 1#" src="https://github.com/user-attachments/assets/5abb1c77-b0a7-43e8-a42f-bfe73e63519f" /><br>
+<sub>Protótipo inicial da interface do Menu, feito no FIGMA.</sub>
 
 ## Requisitos
 
@@ -35,6 +37,9 @@ corrigir e `Esc` para voltar ao menu.
 
 A area interna do monitor usa uma tela virtual de `1000x700` e e escalada para
 acompanhar o tamanho da janela.
+
+<img width="1175" height="906" alt="Tela 2#" src="https://github.com/user-attachments/assets/57959ee9-7f23-4678-8ad9-fff0b4cf04b6" />
+<sub>Protótipo inicial da interface principal do jogo, feito no FIGMA.</sub>
 
 ## Regras
 
