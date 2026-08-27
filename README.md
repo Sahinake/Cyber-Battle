@@ -31,7 +31,9 @@ O jogo reproduz sons durante a introducao e usa os arquivos em
 `assets/sounds/`. A interface possui um menu inspirado no prototipo: use as
 setas para alternar entre `START` e `INSTRUCTIONS`, e `Enter` para selecionar.
 Na partida, digite o palpite e confirme com `Enter`; use `Backspace` para
-corrigir e `Esc` para voltar ao menu.
+corrigir e `Esc` para voltar ao menu. As mensagens exibem o horário em que
+foram registradas. Ao final, pressione `R` para jogar novamente sem a
+introdução, `M` para voltar ao menu ou `Esc` para fechar o jogo.
 
 A area interna do monitor usa uma tela virtual de `1000x700` e e escalada para
 acompanhar o tamanho da janela.

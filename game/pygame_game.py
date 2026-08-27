@@ -122,8 +122,8 @@ class PygameBattle:
                     self.state = "menu"
             elif self.state == "game":
                 self.process_game(event)
-            elif self.state == "finished" and event.key in (pygame.K_RETURN, pygame.K_ESCAPE):
-                self.running = False
+            elif self.state == "finished":
+                self.process_finished(event)
 
     # Método para processar eventos no menu do jogo, permitindo que o jogador navegue pelas opções do menu usando as teclas de seta para cima e para baixo, selecione uma opção com a tecla Enter e saia do jogo com a tecla Escape. Dependendo da opção selecionada, ele inicia o jogo ou exibe as instruções.
     def process_menu(self, event):
@@ -135,6 +135,15 @@ class PygameBattle:
                 self.start_game()
             else:
                 self.state = "instructions"
+        elif event.key == pygame.K_ESCAPE:
+            self.running = False
+
+    def process_finished(self, event):
+        if event.key == pygame.K_r:
+            self.start_match(skip_intro=True)
+        elif event.key == pygame.K_m:
+            self.stop_audio()
+            self.state = "menu"
         elif event.key == pygame.K_ESCAPE:
             self.running = False
 
@@ -170,7 +179,15 @@ class PygameBattle:
         return
 
     # Método para iniciar a partida, configurando a fase do jogo para "guess", definindo uma mensagem inicial para o jogador inserir um número entre 1 e 20, e tentando reproduzir um efeito sonoro de música de fundo. Se ocorrer um erro ao reproduzir o áudio, ele é ignorado.
-    def start_match(self):
+    def start_match(self, skip_intro=False):
+        if skip_intro:
+            self.state = "game"
+            self.secret = random.randint(1, 20)
+            self.attempts = 0
+            self.input_text = ""
+            self.feedback = ""
+            self.messages = []
+            self.active_message = None
         self.phase = "guess"
         self.define_message("CyberPC", "Insira um número entre 1 e 20.")
         try:
@@ -181,6 +198,10 @@ class PygameBattle:
     # Método para processar eventos durante o jogo, lidando com diferentes fases do jogo, como a introdução, a fase de prontidão e a fase de adivinhação. Dependendo da fase atual, ele processa as entradas do jogador, como iniciar a partida, sair do jogo, digitar números e enviar palpites. Ele também fornece feedback ao jogador com base nas ações realizadas.
     def process_game(self, event):
         if self.phase in ("entrance", "intro"):
+            if event.key == pygame.K_TAB:
+                self.start_match(skip_intro=True)
+            elif event.key == pygame.K_SPACE:
+                self.skip_intro_message()
             return
         if self.phase == "ready":
             if event.key == pygame.K_s:
@@ -205,6 +226,16 @@ class PygameBattle:
         elif event.unicode.isdigit() and len(self.input_text) < 2:
             self.input_text += event.unicode
 
+    def skip_intro_message(self):
+        now = pygame.time.get_ticks()
+        if self.phase == "entrance":
+            _, _, duration, _ = self.entrance[self.entrance_index]
+            self.entrance_started = now - duration
+        else:
+            _, _, duration, _ = self.intro_pages[self.intro_index]
+            self.intro_started = now - duration
+        self.update_introduction()
+
     # Método para enviar o palpite do jogador, verificando se o texto de entrada é válido e dentro do intervalo permitido. Se o palpite for correto, ele fornece uma mensagem de vitória e encerra a partida. Caso contrário, ele fornece feedback negativo e permite que o jogador tente novamente.
     def send_guess(self):
         if not self.input_text:
@@ -219,7 +250,7 @@ class PygameBattle:
             return
         self.attempts += 1
         self.complete_active_message()
-        self.messages.append(("Você", str(guess)))
+        self.messages.append(("Você", str(guess), self.message_time()))
         if guess == self.secret:
             self.feedback = self.result_message()
             self.define_message("CyberPC", self.feedback)
@@ -237,7 +268,7 @@ class PygameBattle:
     # Método para definir uma nova mensagem ativa, especificando o personagem, o texto e se a mensagem deve ser digitada ou exibida instantaneamente. Ele completa a mensagem ativa anterior antes de definir a nova mensagem e inicia o processo de digitação, se necessário.
     def define_message(self, character, text, typing=True):
         self.complete_active_message()
-        self.active_message = (character, text)
+        self.active_message = (character, text, self.message_time())
         if typing:
             self.start_typed_text(text)
         else:
@@ -280,7 +311,7 @@ class PygameBattle:
             self.define_message("CyberPC", "Você está preparado para me vencer?!")
             return
         character, text, _, sound = self.intro_pages[self.intro_index]
-        self.active_message = (character, text)
+        self.active_message = (character, text, self.message_time())
         self.intro_started = pygame.time.get_ticks()
         self.start_typed_text(text)
         if sound:
@@ -312,6 +343,23 @@ class PygameBattle:
     def stop_audio(self):
         if self.audio:
             self.audio.stop()
+
+    def message_time(self):
+        return datetime.now().strftime("%H:%M:%S")
+
+    def draw_message(self, character, text, timestamp, y, color):
+        message_end = self.draw_text(
+            f"{character}: {text}",
+            self.fonts["body"],
+            color,
+            48,
+            y,
+            900,
+        )
+        timestamp_surface = self.fonts["small"].render(timestamp, False, (0, 108, 102))
+        timestamp_rect = timestamp_surface.get_rect(right=952, top=message_end - 2)
+        self.virtual.blit(timestamp_surface, timestamp_rect)
+        return timestamp_rect.bottom + 8
 
     # Método para desenhar o texto na tela, dividindo-o em parágrafos e linhas, e ajustando a largura máxima para evitar que o texto ultrapasse os limites da tela. Ele utiliza a fonte especificada para renderizar o texto e retorna a coordenada y final após desenhar todo o texto.
     def draw_text(self, texto, fonte, cor, x, y, largura=940, linha=8):
@@ -376,38 +424,31 @@ class PygameBattle:
         data = self.fonts["small"].render(datetime.now().strftime("%H:%M de %d/%m/%Y"), False, weak)
         self.virtual.blit(data, (760, 44))
         self.draw_text("SALA 1#", self.fonts["title"], green, 48, 88)
-        y = 220
-        for character, text in self.messages[-5:]:
+        y = 190
+        for character, text, timestamp in self.messages[-5:]:
             color = green if character == "CyberPC" else (20, 163, 147)
-            y = self.draw_text(f"{character}: {text}", self.fonts["body"], color, 48, y, 900) + 13
+            y = self.draw_message(character, text, timestamp, y, color)
         if self.active_message:
-            character, text = self.active_message
+            character, text, timestamp = self.active_message
             color = green if character == "CyberPC" else (20, 163, 147)
             text_current = self.typed_text()
-            y = self.draw_text(
-                f"{character}: {text_current}",
-                self.fonts["body"],
-                color,
-                48,
-                y,
-                900,
-            ) + 13
+            y = self.draw_message(character, text_current, timestamp, y, color)
         if self.phase == "entrance":
             self.draw_text(
-                "Conectando ao sistema...",
+                "TAB  pular introdução    ESPAÇO  próxima mensagem",
                 self.fonts["small"],
                 weak,
                 48,
-                585,
+                595,
                 900,
             )
         elif self.phase == "intro":
             self.draw_text(
-                "S  iniciar batalha    N  sair",
+                "TAB  pular introdução    ESPAÇO  próxima mensagem",    
                 self.fonts["small"],
                 weak,
                 48,
-                585,
+                595,
                 900,
             )
         elif self.phase == "ready":
@@ -416,7 +457,16 @@ class PygameBattle:
                 self.fonts["small"],
                 weak,
                 48,
-                585,
+                595,
+                900,
+            )
+        elif self.state == "finished":
+            self.draw_text(
+                "R  jogar novamente    M  voltar ao menu    ESC  fechar",
+                self.fonts["small"],
+                weak,
+                48,
+                595,
                 900,
             )
         else:
